@@ -13,7 +13,7 @@ tracerversion: 1.7.1
 
 In a usual Bayesian phylodynamic analysis only a few hundred sequences can be input and successfully processed within a reasonable runtime.
 Data sets containing thousands of sequences are usually impossible to be analysed.
-Downsampling the data set at random is an option, but leads to imprecise parameter estimates and could lead to underestimation of the time of the most recent common ancestor.
+Down-sampling the data set at random is an option, but leads to imprecise parameter estimates and could lead to underestimation of the time of the most recent common ancestor.
 
 Many data sets however contain duplicates.
 This is especially the case for longitudinally sampled sequences from one host infected by a pathogen causing chronic infection, or for sequences obtained from multiple individuals infected by a slowly mutating pathogen.
@@ -87,7 +87,7 @@ Each instance of that sequence in the alignment has to be assigned one sampling 
 
 The data used in this tutorial contain several unique sequences, of which one is associated with multiple sampling time points.
 We de-duplicated the sequences according to *Option 2* described above, and thus obtained an alignment of 21 sequences, 1500 nucleotides each.
-We specified the sampling dates and number of copies each sequence in the sequence annotation.
+We specified the sampling dates and number of copies of each sequence in the sequence annotation.
 <!-- The number of copies here represents the number of reads that have been obtained for each sequence at that particular time point. -->
 You can check out this annotation by opening the alignment file in a text editor.
 The alignment can be downloaded as part of this tutorial (data_with_duplicates.fasta).
@@ -299,8 +299,8 @@ Usually, one has no or very little knowledge about the values for the sampling p
 However, for most pathogens, a good estimate (from previous studies) about the death rate is available.
 This then allows for fixing or using a narrow prior for the death rate parameter.
 
-For this tutorial, we will fix the value for the death (become uninfectious) rate.
-As we have simulated the data we know it's value exactly.
+For this tutorial, we will fix the death (become uninfectious) rate parameter.
+As we have simulated the data we know its value exactly.
 
 >
 > Click on the arrow to the left of `becomeUninfectiousRate` to expand the parameter prior settings.
@@ -424,7 +424,7 @@ The analysis will take around 15-20 minutes.
 If you do not have the time to wait for it to finish, in `precooked_runs`, we provide an example output that you can use for the rest of this tutorial.
 
 ## Inspect the run in Tracer
-When inspecting the `*.log` file in tracer, we find out that all parameters mixes (ESS>200).
+When inspecting the `*.log` file in tracer, we find that all parameters mixed (ESS>200).
 Though, some parameters, such as the "rhoMultiRho.2" (which is the sampling proportion estimate for the second mass sampling, i.e. 3 months before the last sample), just barely made it past the 200 ESS boundary.
 
 By selecting and comparing estimates for the three sampling proportions, we also see that the sampling proportion for the second time point is lower than for the other two sampling points - the median being 0.78 for the first (at height 0.5), 0.37 for the second (at height 0.25), and 0.71 for the last (at height 0.0) sampling time point, respectively.
@@ -444,7 +444,7 @@ The median clock rate estimate is 2x10<sup>-3</sup> substitutions/site/year.
 Let us now have a detailed look at the effective reproductive number (R<sub>e</sub>), a quantity of great interest for epidemiologist.
 Looking at the estimates for R<sub>e</sub> directly in Tracer can be confusing.
 Tracer does not necessarily give us a clear picture of the changes in the reproductive number over time.
-This is due to the fact that the lengths of intervals for which these estimates are obtained vary during MCMC sampling in BEAST, since trees with different origin values are considered (for details of how skyline models work, refer to the _Skyline plots_ tutorial.
+This is due to the fact that the lengths of intervals for which these estimates are obtained vary during MCMC sampling in BEAST, since trees with different origin values are considered (for details of how skyline models work, refer to the _Skyline plots_ tutorial).
 
 To properly look at the R<sub>e</sub> estimate's changes over time, we have to use a custom script to properly vizualize it.
 
@@ -452,7 +452,7 @@ To properly look at the R<sub>e</sub> estimate's changes over time, we have to u
 
 We will plot the R<sub>e</sub> estimate's changes over time using R.
 Namely, we will use the R-package `bdskytools`.
-It is not available over CRAN, so we need to get the package from the GitHub (if not installed yet):
+It is not available over CRAN, so (if not installed yet) we need to get the package from the GitHub:
 
 ```{R}
 install.packages("devtools")
@@ -478,7 +478,7 @@ lf    <- readLogfile(fname, burnin=0.1)
 
 Notice that we directly discarded first 10% of our chain as burn-in.
 
-We want to smoothen R<sub>e</sub> estimates over a regular (not arbitrary, i.e. based on tree's origin) time grid.
+Next, we want to smoothen R<sub>e</sub> estimates over a regular (not arbitrary, i.e. based on tree's origin) time grid.
 We will use a grid with many more points than the three skyline intervals used in BEAST run.
 
 ```{R}
@@ -513,11 +513,11 @@ abline(h = 1, col="red")
 <figure>
 	<a id="fig:bdsky_smooth"></a>
 	<img style="width:80%;" src="figures/bdsky_smooth.png" alt="">
-	<figcaption>Figure 22: The smooth R<sub>e</sub> skyline.</figcaption>
+	<figcaption>Figure 23: The smooth R<sub>e</sub> skyline.</figcaption>
 </figure>
 <br>
 
-We can see from the figure above that the R<sub>e</sub> was always around 1, but there seems to have been a period where it was rather close to 1.1 between 0.25-0.6 years before present, so 3-7 months before the last sample.
+We can see from the figure above that the R<sub>e</sub> was always around 1, but there seems to have been a time period (0.3-0.6 years before present, so 3.5-7 months before the last sample) where it was rather close to 1.1.
 
 ----
 

@@ -47,11 +47,11 @@ spec="Alignment">
 <map name="OneOnX" >beast.math.distributions.OneOnX</map>
 
 
-<run id="mcmc" spec="MCMC" chainLength="10000000">
+<run id="mcmc" spec="MCMC" chainLength="15000000">
     <state id="state" spec="State" storeEvery="5000">
         <parameter id="clockRate.c:data_with_duplicates" spec="parameter.RealParameter" name="stateNode">0.001</parameter>
         <parameter id="gammaShape.s:data_with_duplicates" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
-        <stateNode id="Tree.t:data_with_duplicates" spec="piqmee.tree.QuasiSpeciesClusterTree">
+        <stateNode id="Tree.t:data_with_duplicates" spec="piqmee.tree.QuasiSpeciesTree">
             <data idref="data_with_duplicates"/>
             <trait id="haplotypeCounts.t:data_with_duplicates" spec="beast.evolution.tree.TraitSet" traitname="qscounts" value="seq10_year_0.578901_Nreads_20=20,seq11_year_0.578901_Nreads_1=1,seq12_year_0.578901_Nreads_1=1,seq13_year_0.578901_Nreads_1=1,seq14_year_0.578901_Nreads_14=14,seq15_year_0.578901_Nreads_8=8,seq16_year_0.578901_Nreads_1=1,seq17_year_0.828901_Nreads_1=1,seq18_year_0.828901_Nreads_12=12,seq19_year_0.828901_Nreads_21=21,seq1_year_0.328901_Nreads_3=3,seq20_year_0.828901_Nreads_3=3,seq21_year_0.828901_Nreads_13=13,seq2_year_0.328901_Nreads_13=13,seq3_year_0.328901_Nreads_7=7,seq4_year_0.328901_Nreads_16=16,seq5_year_0.328901_Nreads_11=11,seq6_year_0.578901_Nreads_1=1,seq7_year_0.578901_Nreads_1=1,seq8_year_0.578901_Nreads_1=1,seq9_year_0.578901_Nreads_1=1">
                 <taxa id="taxonSet.data_with_duplicates" spec="TaxonSet" alignment="@data_with_duplicates"/>
@@ -64,6 +64,12 @@ spec="Alignment">
         <parameter id="rhoMultiRho.t:data_with_duplicates" spec="parameter.RealParameter" dimension="3" lower="0.0" name="stateNode" upper="1.0">0.01 0.01 0.01</parameter>
         <parameter id="reproductiveNumberMultiRho.t:data_with_duplicates" spec="parameter.RealParameter" dimension="3" lower="0.0" name="stateNode" upper="Infinity">2.0</parameter>
     </state>
+
+    <init id="RandomTree.t:data_with_duplicates" spec="piqmee.tree.QuasiSpeciesRandomTree" data="@data_with_duplicates" estimate="false" initial="@Tree.t:data_with_duplicates" rootHeight="0.99" taxonset="@taxonSet.data_with_duplicates">
+        <populationModel id="ConstantPopulation0.t:data_with_duplicates" spec="ConstantPopulation">
+            <parameter id="randomPopSize.t:data_with_duplicates" spec="parameter.RealParameter" name="popSize">1.0</parameter>
+        </populationModel>
+    </init>
 
     <distribution id="posterior" spec="util.CompoundDistribution">
         <distribution id="prior" spec="util.CompoundDistribution">
@@ -125,11 +131,6 @@ spec="Alignment">
     <operator id="reproductiveNumberScalerMultiRho.t:data_with_duplicates" spec="ScaleOperator" parameter="@reproductiveNumberMultiRho.t:data_with_duplicates" scaleFactor="0.75" weight="10.0"/>
 
     <operator id="origScalerMultiRho.t:data_with_duplicates" spec="ScaleOperator" parameter="@originMultiRho.t:data_with_duplicates" scaleFactor="0.75" weight="1.0"/>
-
-    <operator id="R0TreeUpDownOperatorMultiRho.c:data_with_duplicates" spec="UpDownOperator" scaleFactor="0.75" weight="3.0">
-        <up idref="reproductiveNumberMultiRho.t:data_with_duplicates"/>
-        <down idref="Tree.t:data_with_duplicates"/>
-    </operator>
 
     <operator id="piqmeeTreeScalerMultiRho.t:data_with_duplicates" spec="piqmee.operators.QuasiSpeciesTreeScale" origin="@originMultiRho.t:data_with_duplicates" quasiSpeciesTree="@Tree.t:data_with_duplicates" scaleFactor="0.5" weight="3.0"/>
 

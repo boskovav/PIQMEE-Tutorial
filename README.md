@@ -8,7 +8,6 @@ beastversion: 2.6.3
 tracerversion: 1.7.1
 ---
 
-
 # Background
 
 In a usual Bayesian phylodynamic analysis only a few hundred sequences can be input and successfully processed within a reasonable runtime.
@@ -16,7 +15,7 @@ Data sets containing thousands of sequences are usually impossible to be analyse
 Down-sampling the data set at random is an option, but leads to imprecise parameter estimates and could lead to underestimation of the time of the most recent common ancestor.
 
 Many data sets however contain duplicates.
-This is especially the case for longitudinally sampled sequences from one host infected by a pathogen causing chronic infection, or for sequences obtained from multiple individuals infected by a slowly mutating pathogen.
+This is especially the case for longitudinally sampled sequences from one host infected by a pathogen causing a chronic infection, or for sequences obtained from multiple individuals infected by a slowly mutating pathogen.
 One could take advantage of this duplicity to reduce the analysis runtime and thus allow large data sets to be analyzed.
 
 The fact that a certain sequence is seen in multiple copies in the resulting sequence alignment is informative for the tree prior model and thus helps to narrow down the parameters of the population dynamic process.
@@ -63,7 +62,7 @@ RStudio provides a user-friendly graphical user interface to R that makes it eas
 # Practical: Analysing a simulated data set with PIQMEE
 
 The aim of this tutorial is to become familiar with setting up the analyses with PIQMEE and with the subsequent analysis of the output.
-We will demonstrate how to use the PIQMEE package by applying it a simulated data set of 150 sequences sampled longitudinally mimicking a situation where an infected patient gets the pathogen sampled and sequenced at 3 time points.
+We will demonstrate how to use the PIQMEE package by applying it a simulated data set of 150 sequences sampled longitudinally mimicking a situation where a pathogen population from an infected patient gets sampled and sequenced at 3 distinct time points.
 
 ## The Data
 
@@ -78,8 +77,8 @@ We will now describe two ways to make this specification for such data sets.
 
 **Option 1**: The first and simpler way is to represent each copy of each unique sequence as a separate entry in the alignment.
 This means that each unique sequence will appear in the alignment (fasta file) as many times as is the number of its total copies.
-Sampling time point has to specified accordingly for each sequence and the number of total copies has to be set to 1 either in the sequence annotation, directly in the alignment file, or will be input later in BEAUti manually.
-However, if the data set is large, specifying the number of copies in this way may cause BEAST to use too much memory, and thus lead to initialization errors, when reading in the xml file.
+Sampling time point has to specified accordingly for each sequence and the number of total copies has to be set to 1 either in the sequence annotation directly in the alignment file, or will be input later in BEAUti manually.
+However, if the data set is large, specifying the number of copies in this way may cause BEAST to use too much memory when reading in the xml file, and thus lead to initialization errors.
 
 **Option 2**: The second and recommended way is to de-duplicate repetitive sequences per each time point.
 In other words, each unique sequence will appear in the alignment (fasta file) as many times as there are different sampling times associated with that sequence.
@@ -120,7 +119,7 @@ To use the PIQMEE package within BEAUti2 or BEAST2, we first need to download it
     <img style="width:75%;" src="figures/PIQMEEdownload.png" alt="">
     <figcaption>Figure 2: Installing PIQMEE with BEAUti</figcaption>
 </figure>
-<br>
+<br>  
 
 Downloading PIQMEE will automatically trigger the download of BDSKY {% cite Stadler2013 --file PIQMEE-Tutorial/master-refs.bib %} as well, if not installed already, since PIQMEE's tree prior is based on the birth-death skyline model implemented in BDSKY.
 
@@ -184,8 +183,9 @@ The date that specifies the sampling time associated with the given sequence is 
 >
 > Click on the **Auto Configure** button.
 > Here, select `split on character` option.
-Input `_` as the character to split the string on.
-Then, specify that we are interested in the `3`rd character group.
+The default character to split the string on is the underscore `_`.
+This is exactly the separator character used in our sequence annotation, and so we leave it to the default.
+Then, specify that we are interested in the `3`<sup>rd</sup> character group.
 >
 
 <figure>
@@ -197,13 +197,13 @@ Then, specify that we are interested in the `3`rd character group.
 
 Since we have simulated data, the date is in arbitrary time units.
 However, due to the fact that our data set has been simulated such as to mimic within-host pathogen data, the realistic time unit would be years post-infection.
-Specifying the time unit for the sampling times automatically provides a unit for the molecular clock.
+Specifying the time unit for the sampling times automatically provides the unit for the molecular clock.
 So, since we selected the unit for the tip dates in years, we would have the substitution rate in units of substitutions/site/year.
 
 
 ### Specifying the number of copies of each sequence
 As mentioned earlier, our alignment has been de-duplicated such that we only have unique sequences per each time point.
-However, since each sequence has been observed in multiple copies during sequencing, and we want to account for this in our analysis, we need to inform our method where it can get this count information from.
+However, since each sequence has been observed in multiple copies and we want to account for this in our analysis, we need to inform our method where it can get this count information from.
 
 >
 > Change to the **Sequence Counts** tab.
@@ -252,7 +252,7 @@ If we look back at the **Tip Dates** tab, we can spot these 3 time points.
 <figure>
     <a id="fig:samplingtimepoints2"></a>
     <img style="width:75%;" src="figures/PIQMEErhoChangeTimesInTipDatesTab.png" alt="">
-    <figcaption>Figure 11: The three various sampling times in our data set (0, 0.25, 0.5) are highlighted </figcaption>
+    <figcaption>Figure 11: The three distinct sampling times in our data set (0, 0.25, 0.5) are highlighted </figcaption>
 </figure>
 <br>
 
@@ -291,9 +291,9 @@ Then copy the _unique `Height` values_ you saw in the **Tip Dates** tab and inpu
 </figure>
 <br>
 
-Back in the **Priors** tab, we can now specify the actual prior distibutions for the parameters.
-For the selected birth-death model, we have to specify a prior for the death (become uninfectious) rate, the reproductive number and the sampling proportion rho.
-These parameters are correlated, meaning, that without fixing one, or without having very strong priors, we cannot get a good estimate of each parameter.
+Back in the **Priors** tab, we can now specify the actual prior distributions for the parameters.
+For the selected birth-death model, we have to specify a prior for the death (become uninfectious) rate, the reproductive number, the sampling proportion rho and the origin time of the tree.
+The first three parameters are correlated, meaning, that without fixing one, or without having very strong priors, we cannot get a good estimate of each parameter.
 
 Usually, one has no or very little knowledge about the values for the sampling proportion and the birth rate (the duplication rate of the pathogen) and thus very little idea about the reproductive number (=birth rate / death rate).
 However, for most pathogens, a good estimate (from previous studies) about the death rate is available.
@@ -304,7 +304,9 @@ As we have simulated the data we know its value exactly.
 
 >
 > Click on the arrow to the left of `becomeUninfectiousRate` to expand the parameter prior settings.
-Set the `Value` to `124`.
+Click on the tab with the initial values.
+A pop-up window will show up.
+In this pop-up window, set the `Value` to `124`.
 Then, untick the `Estimate` box and hit _OK_.
 >
 >Note that once you untick the Estimate box and click OK, the entry for become uninfectious rate will disappear immediately from the Priors tab and you will not be able to change this settings any longer, unless you start the whole process of setting up the xml in BEAUti from scratch.
@@ -317,7 +319,7 @@ Then, untick the `Estimate` box and hit _OK_.
 </figure>
 <br>
 
-For the two remaining parameters of the birth-death model, the reproductive number and the sampling proportion rho, we will set quite broad priors.
+For the reproductive number and the sampling proportion rho, we will set quite broad priors.
 
 >
 >Expand the `reproductiveNumber` entry.
@@ -347,7 +349,7 @@ Then, we input the vector of starting values for the rho parameter `0.01 0.01 0.
 </figure>
 <br>
 
-The last parameter relevant to the tree prior for which we need to set the prior is the origin.
+The last parameter relevant to the tree prior for which we need to set the prior distribution is the origin.
 We will set a uniform prior for this parameter between 0 and 2 and the initial value to 1.
 
 >
@@ -364,6 +366,32 @@ Change the (starting) `Value` to `1`.
 </figure>
 <br>
 
+To make sure that the initialization of the tree when running BEAST will go smoothly, we have to make sure that the first built tree fits with our requirement of the origin height being 1, i.e. the tree height has to be less than 1.
+To achieve this, we can tell BEAST to scale the first proposed tree such that it follows this requirement.
+We set this up in the "Starting Tree panel", which it hidden at first.
+To make it visible, click on `View >> Show Starting tree panel`.
+
+<figure>
+    <a id="fig:startintreepanel"></a>
+    <img style="width:75%;" src="figures/PIQMEEStartingTreePanel.png" alt="">
+    <figcaption>Figure 18: Viewing starting tree panel</figcaption>
+</figure>
+<br>
+
+A new tab will become visible, where we can see that the first tree will be a random coalescent tree with population size 1.0.
+We leave everything to the default but set the maximum root height to 0.99.
+
+>
+>In the **Starting tree** panel, next to the `Root Heigh`, type in `0.99`.
+>
+
+<figure>
+    <a id="fig:treerootheigh"></a>
+    <img style="width:75%;" src="figures/PIQMEEInitialTreeHeight.png" alt="">
+    <figcaption>Figure 19: Making sure the initial tree height is smaller than the origin height</figcaption>
+</figure>
+<br>
+
 Lastly, we will set the prior for the clock rate.
 Again, we have some information about the clock rate.
 We have simulated the data such as to mimic within-host pathogen evolution.
@@ -371,7 +399,7 @@ Namely, we tried to mimic HIV, and so we set the substitution rate on the order 
 Let our prior on the clock rate reflect this.
 
 >
->Expand the `clockRate` entry.
+> Back in the **Priors** tab, expand the `clockRate` entry.
 Change the distribution from _Uniform_ to `Log Normal`.
 Change `M to 0.002 and S to 0.25`.
 Also, check the box next to `Mean In Real Space`.
@@ -380,7 +408,7 @@ Also, check the box next to `Mean In Real Space`.
 <figure>
     <a id="fig:clock"></a>
     <img style="width:75%;" src="figures/PIQMEEPriorClockRate.png" alt="">
-    <figcaption>Figure 18: Setting up the clock rate prior</figcaption>
+    <figcaption>Figure 20: Setting up the clock rate prior</figcaption>
 </figure>
 <br>
 
@@ -388,23 +416,24 @@ For the gammaShape parameter we leave the prior settings to the default.
 
 ### Specifying Chain Length
 In the **MCMC** tab, inspect the settings.
-The `Chain Length` is set to 10,000,000.
-This is a reasonable chain length for the size of our data set and the number of parameters we need to estimate, and we thus leave everything to the default.
+Change the `Chain Length` to 15,000,000.
+This is a reasonable chain length for the size of our data set and the number of parameters we need to estimate.
+We leave everything else set to the default.
 
 <figure>
     <a id="fig:chainlength"></a>
     <img style="width:75%;" src="figures/PIQMEEChainLength.png" alt="">
-    <figcaption>Figure 19: Setting up the chain length</figcaption>
+    <figcaption>Figure 21: Setting up the chain length</figcaption>
 </figure>
 <br>
 
 We have now finished the xml set up.
-Save the xml by clicking on `File >> Save as` in BEAUti navigation panel.
+Save the xml by clicking on `File >> Save as` in BEAUti navigation panel and name the file `data_with_duplicates.xml`.
 
 <figure>
     <a id="fig:savexml"></a>
     <img style="width:25%;" src="figures/PIQMEESavexml.png" alt="">
-    <figcaption>Figure 20: Saving the xml file</figcaption>
+    <figcaption>Figure 22: Saving the xml file</figcaption>
 </figure>
 <br>
 
@@ -416,7 +445,7 @@ _Optional_: If you want to obtain exactly the same results as we did for this tu
 <figure>
     <a id="fig:beast"></a>
     <img style="width:50%;" src="figures/PIQMEEBEAST.png" alt="">
-    <figcaption>Figure 21: Running xml with BEAST</figcaption>
+    <figcaption>Figure 23: Running xml with BEAST</figcaption>
 </figure>
 <br>
 
@@ -427,18 +456,18 @@ If you do not have the time to wait for it to finish, in `precooked_runs`, we pr
 When inspecting the `*.log` file in tracer, we find that all parameters mixed (ESS>200).
 Though, some parameters, such as the "rhoMultiRho.2" (which is the sampling proportion estimate for the second mass sampling, i.e. 3 months before the last sample), just barely made it past the 200 ESS boundary.
 
-By selecting and comparing estimates for the three sampling proportions, we also see that the sampling proportion for the second time point is lower than for the other two sampling points - the median being 0.78 for the first (at height 0.5), 0.37 for the second (at height 0.25), and 0.71 for the last (at height 0.0) sampling time point, respectively.
+By selecting and comparing estimates for the three sampling proportions, we also see that the sampling proportion for the second time point is lower than for the other two sampling points - the median being 0.78 for the first (at height 0.5), 0.37 for the second (at height 0.25), and 0.73 for the last (at height 0.0) sampling time point, respectively.
 These estimates are very close to the true values; the actual values (from simulation) being 0.91, 0.2 and 1.
 
 <figure>
 	<a id="fig:tracer"></a>
 	<img style="width:100%;" src="figures/TracerRho.png" alt="">
-	<figcaption>Figure 22: Checking the values of sampling proportion rho in Tracer</figcaption>
+	<figcaption>Figure 24: Checking the values of sampling proportion rho in Tracer</figcaption>
 </figure>
 <br>
 
 We can also check the other parameters and their estimates in Tracer.
-The median tree height, for instance, is 0.65 years, corresponding to around 8 months and the maximum tree height is 1.77 years.
+The median tree height, for instance, is 0.65 years, corresponding to around 8 months and the maximum tree height is 1.66 years.
 The median clock rate estimate is 2x10<sup>-3</sup> substitutions/site/year.
 
 Let us now have a detailed look at the effective reproductive number (R<sub>e</sub>), a quantity of great interest for epidemiologist.
@@ -482,11 +511,11 @@ Next, we want to smoothen R<sub>e</sub> estimates over a regular (not arbitrary,
 We will use a grid with many more points than the three skyline intervals used in BEAST run.
 
 ```{R}
-# time period covered by the grid starts at present (0) and 
-#   goes back into the past until 1.8 years before present
+# time period covered by the grid starts at present (0) and
+#   goes back into the past until 1.7 years before present
 #   (remember that the maximum tree height we observed in our estimates
-#    was 1.77, so rounded 1.8 years)
-timegrid       <- seq(0,1.8,length.out=101)
+#    was 1.66, so rounded 1.7 years)
+timegrid       <- seq(0,1.7,length.out=101)
 ```
 
 Next, we can extract log entries for the R<sub>e</sub> and smoothen over a regular (not arbitrary, based on tree's origin) time grid.
@@ -513,7 +542,7 @@ abline(h = 1, col="red")
 <figure>
 	<a id="fig:bdsky_smooth"></a>
 	<img style="width:80%;" src="figures/bdsky_smooth.png" alt="">
-	<figcaption>Figure 23: The smooth R<sub>e</sub> skyline.</figcaption>
+	<figcaption>Figure 25: The smooth R<sub>e</sub> skyline.</figcaption>
 </figure>
 <br>
 

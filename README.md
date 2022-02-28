@@ -552,7 +552,7 @@ We can see from the figure above that the R<sub>e</sub> was always around 1, but
 
 # Useful Links
 
-- [Bayesian Evolutionary Analysis with BEAST 2](http://www.beast2.org/book.html) {% cite BEAST2book2014 --file Tutorial-Template/master-refs.bib %}
+- [Bayesian Evolutionary Analysis with BEAST 2](http://www.beast2.org/book.html) {% cite BEAST2book2014 --file Introduction-to-BEAST2/master-refs.bib %}
 - BEAST 2 website and documentation: [http://www.beast2.org/](http://www.beast2.org/)
 - BEAST 1 website and documentation: [http://beast.bio.ed.ac.uk](http://beast.bio.ed.ac.uk)
 - Join the BEAST user discussion: [http://groups.google.com/group/beast-users](http://groups.google.com/group/beast-users)
@@ -561,4 +561,4 @@ We can see from the figure above that the R<sub>e</sub> was always around 1, but
 
 # Relevant References
 
-{% bibliography --cited --file Tutorial-Template/master-refs.bib %}
+{% bibliography --cited --file PIQMEE-Tutorial/master-refs.bib %}
